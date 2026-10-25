@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#142a20">
+  <meta name="description" content="Семейная доска Arch Family">
+  <title>Arch Family — семейная доска</title>
+  <link rel="stylesheet" href="./assets/site.css">
+  <script src="./config.js"></script>
+  <script type="module" src="./assets/site.js"></script>
+</head>
+<body>
+  <div class="site-shell">
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Arch Family — главная">
+        <span class="brand-mark" aria-hidden="true">A</span>
+        <span><strong id="brandTitle">Arch Family</strong><small id="brandSubtitle">Семейная доска</small></span>
+      </a>
+      <div class="topbar-right">
+        <div class="connection-state" id="connectionState"><span class="state-dot"></span><span>Подключение…</span></div>
+        <a class="admin-link" href="./admin/">Настройки сайта <span aria-hidden="true">↗</span></a>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <aside class="side-panel">
+        <div class="side-heading"><span class="eyebrow">FAMILY BOARD</span><span class="sakura-mark" aria-hidden="true">✿</span></div>
+        <p class="side-copy">Общий семейный архив, состав и связи между участниками.</p>
+        <div class="stats-grid">
+          <div class="stat-box"><strong id="memberCount">—</strong><span>участников</span></div>
+          <div class="stat-box"><strong id="relationCount">—</strong><span>связей</span></div>
+        </div>
+        <label class="filter-label" for="searchInput">Поиск участника</label>
+        <div class="search-control"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Имя или роль…" autocomplete="off"><button id="clearSearch" aria-label="Очистить поиск" hidden>×</button></div>
+        <label class="filter-label" for="roleSelect">Роль</label>
+        <select class="filter-select" id="roleSelect"><option value="">Все роли</option></select>
+        <div class="side-divider"></div>
+        <div class="legend-title">Типы связей</div>
+        <div class="legend-list" id="relationLegend">
+          <span><i class="legend-line partner"></i>Партнёры</span>
+          <span><i class="legend-line parent"></i>Родитель → ребёнок</span>
+          <span><i class="legend-line sibling"></i>Брат / сестра</span>
+          <span><i class="legend-line allied"></i>Союзные семьи</span>
+        </div>
+        <div class="side-spacer"></div>
+        <div class="privacy-note"><span class="privacy-icon" aria-hidden="true">⌑</span><p>Состав синхронизируется с Discord. Изменения участников выполняются через бота.</p></div>
+        <div class="side-footer">ARCH FAMILY <span>·</span> FAMILY ARCHIVE</div>
+      </aside>
+
+      <section class="board-column" aria-label="Семейная доска">
+        <div class="board-toolbar">
+          <div class="board-title-wrap"><h1 id="boardHeading">Семейная доска</h1><p id="boardHint">Нажмите на карточку, чтобы открыть профиль.</p></div>
+          <div class="board-controls">
+            <button class="icon-button" id="zoomOut" title="Уменьшить" aria-label="Уменьшить масштаб">−</button>
+            <span class="zoom-label" id="zoomLabel">100%</span>
+            <button class="icon-button" id="zoomIn" title="Увеличить" aria-label="Увеличить масштаб">+</button>
+            <button class="fit-button" id="fitBoard">Вписать доску</button>
+          </div>
+        </div>
+        <div class="board-viewport" id="boardViewport">
+          <div class="board-stage" id="boardStage">
+            <svg class="relation-layer" id="relationLayer" aria-hidden="true"></svg>
+            <div class="cards-layer" id="cardsLayer"></div>
+            <div class="empty-state" id="emptyState" hidden>
+              <span class="empty-flower" aria-hidden="true">✿</span>
+              <h2 id="emptyTitle">Семейная доска пока пуста</h2>
+              <p id="emptyText">Когда бот синхронизирует участников Discord, они появятся здесь.</p>
+            </div>
+          </div>
+          <div class="board-loading" id="boardLoading"><span class="loader"></span><span>Загружаем семейный состав…</span></div>
+        </div>
+        <footer class="board-footer"><span id="footerStatus">Источник данных: Supabase</span><span>Доска общая · раскладка синхронизируется</span></footer>
+      </section>
+    </main>
+  </div>
+
+  <div class="drawer-scrim" id="drawerScrim" hidden></div>
+  <aside class="profile-drawer" id="profileDrawer" aria-labelledby="profileName" aria-hidden="true">
+    <button class="drawer-close" id="closeDrawer" aria-label="Закрыть профиль">×</button>
+    <div class="drawer-cover"><span class="cover-sakura" aria-hidden="true">✿</span></div>
+    <div class="drawer-body">
+      <div class="drawer-avatar" id="profileAvatar">A</div>
+      <span class="eyebrow" id="profileKind">УЧАСТНИК СЕМЬИ</span>
+      <h2 id="profileName">Участник</h2>
+      <p class="profile-role" id="profileRole"></p>
+      <p class="profile-bio" id="profileBio"></p>
+      <div class="profile-details" id="profileDetails"></div>
+      <div class="profile-relations"><h3>Связи</h3><div id="profileRelations"><p class="muted">Нет указанных связей.</p></div></div>
+    </div>
+  </aside>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

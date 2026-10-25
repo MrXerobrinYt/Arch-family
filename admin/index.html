@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10241a">
+  <title>Настройки Arch Family</title>
+  <link rel="stylesheet" href="./admin.css">
+  <script src="../config.js"></script>
+  <script type="module" src="./admin.js"></script>
+</head>
+<body>
+  <div class="login-gate" id="loginGate">
+    <form class="login-card" id="loginForm">
+      <div class="login-logo">A</div><span class="eyebrow">ARCH FAMILY · ADMIN</span>
+      <h1>Панель управления</h1><p>Войдите, чтобы настраивать сайт и управлять общей доской.</p>
+      <label for="adminEmail">Email администратора Supabase</label>
+      <input id="adminEmail" name="email" type="email" autocomplete="username" required placeholder="admin@example.com">
+      <label for="adminPassword">Пароль администратора</label>
+      <input id="adminPassword" name="password" type="password" autocomplete="current-password" required minlength="8" placeholder="Введите пароль">
+      <button class="button primary full" type="submit">Войти <span>→</span></button>
+      <p class="login-error" id="loginError" hidden></p>
+      <small>Вход через Supabase Auth. Пользователь должен иметь серверную роль app_metadata.role = admin.</small>
+    </form>
+  </div>
+
+  <div class="admin-app" id="adminApp" hidden>
+    <header class="admin-topbar">
+      <a href="../" class="admin-brand"><span class="admin-mark">A</span><span><strong>Arch Family</strong><small>CONTROL PANEL</small></span></a>
+      <div class="top-actions"><span class="save-indicator" id="saveIndicator"><i></i> Все настройки загружены</span><a class="button ghost" href="../" target="_blank" rel="noopener">Открыть сайт ↗</a><button class="button ghost" id="logoutButton" type="button">Выйти</button></div>
+    </header>
+    <div class="admin-layout">
+      <aside class="admin-sidebar">
+        <div class="nav-label">ОБЗОР</div>
+        <button class="nav-item active" data-view="overview"><span class="nav-icon">◫</span>Главная панель</button>
+        <div class="nav-label">НАСТРОЙКА САЙТА</div>
+        <button class="nav-item" data-view="appearance"><span class="nav-icon">◐</span>Оформление</button>
+        <button class="nav-item" data-view="board"><span class="nav-icon">▦</span>Доска и карточки</button>
+        <button class="nav-item" data-view="layout"><span class="nav-icon">✥</span>Расположение</button>
+        <button class="nav-item" data-view="visibility"><span class="nav-icon">◉</span>Публичность</button>
+        <button class="nav-item" data-view="relations"><span class="nav-icon">⌘</span>Связи</button>
+        <div class="nav-label">ИНТЕГРАЦИИ</div>
+        <button class="nav-item" data-view="discord"><span class="nav-icon">◍</span>Discord-бот</button>
+        <button class="nav-item" data-view="roles"><span class="nav-icon">☷</span>Роли Discord</button>
+        <button class="nav-item" data-view="database"><span class="nav-icon">▤</span>Supabase</button>
+        <div class="nav-label">ОБСЛУЖИВАНИЕ</div>
+        <button class="nav-item" data-view="backup"><span class="nav-icon">↧</span>Резервные копии</button>
+        <button class="nav-item" data-view="security"><span class="nav-icon">♢</span>Безопасность</button>
+        <div class="sidebar-bottom"><div class="sidebar-flower">✿</div><p>Сайт, общая доска и настройки в одном месте.</p><span>ARCH FAMILY · V2</span></div>
+      </aside>
+
+      <main class="admin-main">
+        <div class="page-top"><div><div class="breadcrumbs">Arch Family <span>/</span> <b id="breadcrumbCurrent">Главная панель</b></div><h1 id="pageTitle">Главная панель</h1><p id="pageDescription">Состояние сайта, базы и Discord-интеграции.</p></div><div class="page-actions"><button class="button secondary" id="refreshButton" type="button">↻ Обновить статус</button><button class="button primary" id="saveAllButton" type="button">Сохранить настройки</button></div></div>
+
+        <section class="view active" id="view-overview">
+          <div class="welcome-strip"><div><span class="eyebrow">FAMILY BOARD SYSTEM</span><h2>Управление Arch Family</h2><p>Оформление и раскладка хранятся в Supabase. Состав участников синхронизирует отдельный Discord-бот.</p></div><div class="welcome-flower">✿</div></div>
+          <div class="status-grid">
+            <article class="status-card"><div class="status-card-top"><span>SUPABASE</span><span class="status-icon database-icon">▤</span></div><strong class="status-value" id="overviewDbState">Проверяем…</strong><p id="overviewDbText">Соединение с базой данных</p><button class="text-button" data-go="database">Настроить подключение ↗</button></article>
+            <article class="status-card"><div class="status-card-top"><span>DISCORD BOT</span><span class="status-icon discord-icon">◍</span></div><strong class="status-value" id="overviewBotState">Проверяем…</strong><p id="overviewBotText">Синхронизация участников</p><button class="text-button" data-go="discord">Настроить бота ↗</button></article>
+            <article class="status-card"><div class="status-card-top"><span>УЧАСТНИКИ</span><span class="status-icon members-icon">♙</span></div><strong class="status-value" id="overviewMembers">—</strong><p>Активные профили в базе</p><button class="text-button" data-go="discord">Синхронизировать через Discord ↗</button></article>
+            <article class="status-card"><div class="status-card-top"><span>СЕМЕЙНЫЕ СВЯЗИ</span><span class="status-icon relations-icon">⌘</span></div><strong class="status-value" id="overviewRelations">—</strong><p>Типизированные связи между карточками</p><button class="text-button" data-go="relations">Управлять связями ↗</button></article>
+          </div>
+          <div class="section-grid overview-lower">
+            <article class="panel"><div class="panel-heading"><div><span class="eyebrow">QUICK SETTINGS</span><h3>Быстрые настройки</h3></div><span class="panel-emblem">✿</span></div><div class="quick-list"><button data-go="appearance"><span class="quick-icon">◐</span><span><b>Внешний вид</b><small>Цвета, фон, типографика</small></span><i>→</i></button><button data-go="layout"><span class="quick-icon">✥</span><span><b>Расположение карточек</b><small>Одна раскладка для всех посетителей</small></span><i>→</i></button><button data-go="visibility"><span class="quick-icon">◉</span><span><b>Публичные данные</b><small>Какие поля видны на сайте</small></span><i>→</i></button><button data-go="backup"><span class="quick-icon">↧</span><span><b>Резервная копия</b><small>Экспорт настроек и данных</small></span><i>→</i></button></div></article>
+            <article class="panel"><div class="panel-heading"><div><span class="eyebrow">SYSTEM CHECK</span><h3>Состояние проекта</h3></div><span class="check-mark">✓</span></div><div class="check-list" id="overviewChecks"><div class="check-row"><span class="mini-state pending"></span><span>Проверка данных Supabase</span><small>ожидание</small></div><div class="check-row"><span class="mini-state pending"></span><span>Статус Discord-бота</span><small>ожидание</small></div><div class="check-row"><span class="mini-state pending"></span><span>Вход администратора Supabase Auth</span><small>серверная настройка</small></div></div><div class="info-callout"><span>i</span><p>В браузере используется только публичный Supabase publishable key. Ключи бота и серверные секреты хранятся отдельно.</p></div></article>
+          </div>
+        </section>
+
+        <section class="view" id="view-appearance">
+          <div class="section-grid appearance-grid">
+            <article class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">BRANDING</span><h3>Название и подпись</h3><p>Текст в шапке публичного сайта.</p></div></div>
+              <label class="field-label">Название сайта<input class="text-input setting" id="siteTitle" maxlength="64" data-setting="siteTitle"></label>
+              <label class="field-label">Подзаголовок<input class="text-input setting" id="siteSubtitle" maxlength="120" data-setting="siteSubtitle"></label>
+              <div class="divider"></div><div class="panel-heading compact"><div><h3>Цветовая тема</h3><p>Выберите основу и при необходимости скорректируйте цвета.</p></div></div>
+              <div class="theme-options" id="themeOptions">
+                <label class="theme-option"><input type="radio" name="theme" value="forest-sakura" data-setting="theme"><span class="theme-swatch theme-forest"><i>✿</i></span><b>Лес и сакура</b><small>Основная тема</small></label>
+                <label class="theme-option"><input type="radio" name="theme" value="walnut" data-setting="theme"><span class="theme-swatch theme-walnut"><i>✿</i></span><b>Тёмный орех</b><small>Тёплый вариант</small></label>
+                <label class="theme-option"><input type="radio" name="theme" value="cork" data-setting="theme"><span class="theme-swatch theme-cork"><i>✿</i></span><b>Пробковая доска</b><small>Светлый вариант</small></label>
+                <label class="theme-option"><input type="radio" name="theme" value="midnight" data-setting="theme"><span class="theme-swatch theme-midnight"><i>✿</i></span><b>Сумерки</b><small>Холодные оттенки</small></label>
+                <label class="theme-option"><input type="radio" name="theme" value="custom" data-setting="theme"><span class="theme-swatch theme-custom"><i>✿</i></span><b>Своя палитра</b><small>Ручная настройка цветов</small></label>
+              </div>
+              <div class="divider"></div><div class="color-grid">
+                <label class="color-field">Акцент<input class="setting color-input" type="color" id="accentColor" data-setting="accentColor"></label>
+                <label class="color-field">Дерево / рамка<input class="setting color-input" type="color" id="woodColor" data-setting="woodColor"></label>
+                <label class="color-field">Карточки<input class="setting color-input" type="color" id="paperColor" data-setting="paperColor"></label>
+                <label class="color-field">Основной текст<input class="setting color-input" type="color" id="inkColor" data-setting="inkColor"></label>
+                <label class="color-field">Вторичный текст<input class="setting color-input" type="color" id="mutedColor" data-setting="mutedColor"></label>
+              </div>
+              <label class="field-label">Шрифт сайта<select class="select-input setting" id="fontFamily" data-setting="fontFamily"><option value="Georgia">Georgia — книжный</option><option value="system-ui">System UI — современный</option><option value="Arial">Arial — нейтральный</option><option value="Trebuchet MS">Trebuchet MS — мягкий</option><option value="Verdana">Verdana — широкий</option></select></label>
+            </article>
+            <article class="panel preview-panel"><div class="panel-heading"><div><span class="eyebrow">LIVE PREVIEW</span><h3>Предварительный просмотр</h3><p>Примерный вид карточки с выбранными параметрами.</p></div><span class="preview-live"><i></i> Live</span></div>
+              <div class="preview-canvas" id="appearancePreview"><div class="preview-branch">✿</div><div class="preview-card" id="previewCard"><div class="preview-avatar">A</div><strong id="previewTitle">Arch Member</strong><span id="previewRole">Участник семьи</span><p>Текст описания участника показывается в пределах карточки.</p><small>Семейный архив</small></div></div>
+              <div class="preview-note"><span>✧</span><p>Предпросмотр показывает цвета и базовую карточку. Итоговый вид зависит от реального аватара и длины имени.</p></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="view-board">
+          <div class="section-grid board-settings-grid">
+            <article class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">CANVAS</span><h3>Параметры доски</h3><p>Фон, масштаб и расстояние между элементами.</p></div></div>
+              <label class="field-label">Фон доски<select id="boardBackground" class="select-input setting" data-setting="boardBackground"><option value="sakura">Дерево с сакурой</option><option value="wood">Дерево</option><option value="cork">Пробковая доска</option><option value="forest">Лесной светлый</option></select></label>
+              <label class="field-label range-label"><span>Масштаб при открытии <b id="initialZoomLabel">90%</b></span><input class="range-input setting" id="initialZoom" data-setting="initialZoom" type="range" min="0.45" max="1.3" step="0.05"></label>
+              <label class="field-label range-label"><span>Поля и расстояния <b id="boardPaddingLabel">38 px</b></span><input class="range-input setting" id="boardPadding" data-setting="boardPadding" type="range" min="8" max="100" step="2"></label>
+              <label class="field-label range-label"><span>Привязка к сетке <b id="snapGridLabel">12 px</b></span><input class="range-input setting" id="snapGrid" data-setting="snapGrid" type="range" min="0" max="48" step="4"></label>
+              <div class="toggle-list"><label class="toggle-row"><span><b>Автовписывание доски</b><small>Уменьшать масштаб, чтобы видеть раскладку.</small></span><input type="checkbox" class="setting" id="autoFit" data-setting="autoFit"><i></i></label><label class="toggle-row"><span><b>Показывать линии связей</b><small>Отображать семейные и союзные отношения.</small></span><input type="checkbox" class="setting" id="showRelations" data-setting="showRelations"><i></i></label></div>
+            </article>
+            <article class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">MEMBER CARDS</span><h3>Карточки участников</h3><p>Размеры и внешний вид карточек на доске.</p></div></div>
+              <label class="field-label range-label"><span>Ширина карточки <b id="cardWidthLabel">210 px</b></span><input class="range-input setting" id="cardWidth" data-setting="cardWidth" type="range" min="170" max="300" step="5"></label>
+              <label class="field-label range-label"><span>Скругление углов <b id="cardRadiusLabel">14 px</b></span><input class="range-input setting" id="cardRadius" data-setting="cardRadius" type="range" min="0" max="28" step="2"></label>
+              <div class="toggle-list"><label class="toggle-row"><span><b>Тень карточки</b><small>Мягкая тень для глубины доски.</small></span><input type="checkbox" class="setting" id="cardShadow" data-setting="cardShadow"><i></i></label><label class="toggle-row"><span><b>Строка поиска</b><small>Поиск по имени, роли и описанию.</small></span><input type="checkbox" class="setting" id="showSearch" data-setting="showSearch"><i></i></label><label class="toggle-row"><span><b>Фильтр по ролям</b><small>Быстрый выбор категории участника.</small></span><input type="checkbox" class="setting" id="showRoleFilter" data-setting="showRoleFilter"><i></i></label></div>
+              <div class="info-callout"><span>i</span><p>Настройки раскладки не меняют состав семьи. Новые карточки сначала размещаются автоматически; потом координаты можно откорректировать на вкладке «Расположение».</p></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="view" id="view-layout">
+          <div class="panel"><div class="panel-heading layout-heading"><div><span class="eyebrow">SHARED CANVAS</span><h3>Общее расположение карточек</h3><p>Перетаскивайте карточки. После сохранения все посетители увидят одинаковую раскладку.</p></div><div class="inline-actions"><button class="button secondary" id="autoLayoutButton" type="button">Авторасстановка</button><button class="button primary" id="saveLayoutButton" type="button">Сохранить раскладку</button></div></div>
+            <div class="layout-hint"><span>↖</span><p>Координаты сохраняются в Supabase, а не в localStorage. Состав участников по-прежнему управляется Discord-ботом.</p></div>
+            <div class="layout-board-viewport" id="layoutBoardViewport"><div class="layout-board" id="layoutBoard"><svg id="layoutLines"></svg><div id="layoutCards"></div><div class="layout-empty" id="layoutEmpty" hidden>Нет участников. Сначала запустите синхронизацию Discord.</div></div></div>
+            <div class="layout-footer"><span id="layoutCount">0 карточек</span><span id="layoutSaveState">Изменения не сохранены</span></div>
+          </div>
+        </section>
+
+        <section class="view" id="view-visibility">
+          <div class="section-grid"><article class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">PUBLIC FIELDS</span><h3>Какие данные будут видны</h3><p>Выключенные поля не передаются в публичный API.</p></div></div>
+            <div class="toggle-list large"><label class="toggle-row"><span><b>Аватары</b><small>Аватар участника с Discord или профильная картинка.</small></span><input type="checkbox" class="setting" id="publicAvatars" data-setting="publicAvatars"><i></i></label><label class="toggle-row"><span><b>Названия ролей</b><small>Публичная роль участника на карточке и в профиле.</small></span><input type="checkbox" class="setting" id="publicRoleNames" data-setting="publicRoleNames"><i></i></label><label class="toggle-row"><span><b>Описание профиля</b><small>Короткая биография, синхронизируемая/изменяемая через доверенные действия.</small></span><input type="checkbox" class="setting" id="publicProfileDescription" data-setting="publicProfileDescription"><i></i></label><label class="toggle-row"><span><b>Показывать описание на карточке</b><small>Описание остаётся в профиле, если публичность включена.</small></span><input type="checkbox" class="setting" id="showBio" data-setting="showBio"><i></i></label><label class="toggle-row"><span><b>Показывать дату вступления</b><small>Отображать дату, если она есть в данных участника.</small></span><input type="checkbox" class="setting" id="showJoined" data-setting="showJoined"><i></i></label><label class="toggle-row"><span><b>Показывать роль на карточке</b><small>Убирать роль из карточки, не меняя категорию в базе.</small></span><input type="checkbox" class="setting" id="showRole" data-setting="showRole"><i></i></label><label class="toggle-row"><span><b>Показывать аватар на карточке</b><small>Убирать аватар из самой доски.</small></span><input type="checkbox" class="setting" id="showAvatar" data-setting="showAvatar"><i></i></label></div>
+            <div class="warning-callout"><span>!</span><p>Эти переключатели — дополнительный слой приватности сайта. До публикации убедитесь, что каждый участник согласен раскрывать свой ник, аватар и описание.</p></div>
+          </article><article class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">PUBLIC ACCESS</span><h3>Правила публичного сайта</h3><p>Участники открыты для просмотра, редактирование выполняется отдельно.</p></div></div>
+            <div class="access-feature"><span class="access-feature-icon">◉</span><div><b>Публичный просмотр</b><p>Сайт читает только разрешённые поля напрямую из Supabase с помощью publishable key и RLS.</p><span class="pill green">READ ONLY</span></div></div>
+            <div class="access-feature"><span class="access-feature-icon">⌘</span><div><b>Управление составом</b><p>Добавление, изменение ролей и архивирование осуществляются Discord-ботом с проверкой прав.</p><span class="pill green">DISCORD CONTROLLED</span></div></div>
+            <div class="access-feature"><span class="access-feature-icon">♢</span><div><b>Управление сайтом</b><p>Вход через Supabase Auth; запись разрешена только аккаунту с app_metadata.role = admin и действующими RLS-политиками.</p><span class="pill">ADMIN ONLY</span></div></div>
+          </article></div>
+        </section>
+
+        <section class="view" id="view-relations">
+          <div class="section-grid relations-grid"><article class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">RELATION MANAGER</span><h3>Добавить связь</h3><p>Связи отображаются линиями на общей доске.</p></div></div>
+            <form id="relationForm"><label class="field-label">Участник A<select id="relationFrom" class="select-input" required></select></label><label class="field-label">Тип отношения<select id="relationType" class="select-input" required><option value="partner">Партнёры</option><option value="parent_child">Родитель → ребёнок</option><option value="sibling">Брат / сестра</option><option value="allied_family">Союзные семьи</option><option value="other">Другая связь</option></select></label><label class="field-label">Участник B<select id="relationTo" class="select-input" required></select></label><div class="form-help" id="relationDirectionHelp">Для связи «Родитель → ребёнок» участник A должен быть родителем.</div><label class="field-label">Подпись (необязательно)<input class="text-input" id="relationLabel" maxlength="120" placeholder="Например, союз семей"></label><button class="button primary full" type="submit">Добавить связь <span>＋</span></button></form>
+            <div class="info-callout"><span>i</span><p>Для симметричных отношений создаются оба направления автоматически. Родительско-детская связь сохраняет направление A → B.</p></div>
+          </article><article class="panel relations-list-panel"><div class="panel-heading"><div><span class="eyebrow">CURRENT RELATIONS</span><h3>Существующие связи</h3><p>Удаление убирает связь и её парное направление, если оно есть.</p></div><span class="count-pill" id="relationListCount">0</span></div><div class="relations-list" id="relationsList"><div class="list-empty">Загружаем связи…</div></div></article></div>
+        </section>
+
+        <section class="view" id="view-discord">
+          <div class="integration-hero discord-hero"><div class="integration-logo">◍</div><div class="integration-copy"><span class="eyebrow">DISCORD INTEGRATION</span><h2>Discord-бот Arch Family</h2><p>Сайт и Discord-бот публикуются отдельно. Токен и серверный ключ доступны только отдельному процессу бота, который пишет статус в Supabase.</p></div><span class="integration-state" id="discordStateBadge">Проверка…</span></div>
+          <div class="section-grid integration-grid"><article class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">BOT STATUS</span><h3>Подключение</h3><p>Статус отдельного процесса бота — через heartbeat в Supabase.</p></div></div><div class="connection-list" id="discordConnectionList"><div class="connection-row"><span class="connection-indicator pending"></span><div><b>Discord Bot Token</b><small>Проверяем конфигурацию…</small></div><span>—</span></div></div><button class="button secondary full" id="refreshDiscordButton" type="button">Проверить подключение</button><div class="divider"></div><div class="panel-heading compact"><div><h3>Синхронизация участников</h3><p>Полная синхронизация выполняется slash-командой Discord.</p></div></div><div class="command-card"><code>/family-sync</code><p>Обновляет ники, аватары, роли и активный статус всех участников сервера.</p></div><div class="command-card"><code>/family-status</code><p>Показывает количество профилей и связей в базе.</p></div></article>
+          <article class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">SETUP CHECKLIST</span><h3>Первое подключение</h3><p>Настройте Discord Developer Portal и переменные окружения на VPS/хостинге бота.</p></div></div><ol class="setup-list"><li><span>1</span><div><b>Создайте приложение</b><p>Discord Developer Portal → Applications → New Application.</p></div></li><li><span>2</span><div><b>Включите Server Members Intent</b><p>В разделе Bot активируйте privileged Gateway Intent для списка участников.</p></div></li><li><span>3</span><div><b>Заполните переменные окружения</b><p><code>DISCORD_BOT_TOKEN</code>, <code>DISCORD_CLIENT_ID</code>, <code>DISCORD_GUILD_ID</code>.</p></div></li><li><span>4</span><div><b>Добавьте бота на сервер</b><p>Дайте доступ к Guilds, Server Members Intent и командам приложений. Не выдавайте Administrator без необходимости.</p></div></li><li><span>5</span><div><b>Проверьте роли и синхронизацию</b><p>Сверьте роли во вкладке «Роли Discord», затем выполните <code>/family-sync</code>.</p></div></li></ol><div class="warning-callout"><span>!</span><p>Токен бота нельзя вводить в это поле или публиковать в архиве. Изменение токена выполняется в секретах хостинга/.env с последующим перезапуском процесса.</p></div></article></div>
+        </section>
+
+        <section class="view" id="view-roles">
+          <div class="section-grid role-grid"><article class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">ROLE MAPPING</span><h3>Сопоставление ролей</h3><p>Discord Role ID → категория участника сайта.</p></div></div><form id="roleForm"><label class="field-label">Discord Role ID<input class="text-input" id="roleDiscordId" required inputmode="numeric" pattern="[0-9]{10,25}" placeholder="123456789012345678"></label><label class="field-label">Название роли<input class="text-input" id="roleDiscordName" required maxlength="100" placeholder="Founder of the family"></label><label class="field-label">Категория<select class="select-input" id="roleMemberKind" required><option value="founder">Основатель</option><option value="deputy">Заместитель</option><option value="senior">Старший участник</option><option value="family">Участник семьи</option><option value="allied">Союзная семья</option><option value="other">Другие</option></select></label><label class="field-label">Приоритет<select class="select-input" id="rolePriority"><option value="1">1 — самый высокий</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="10">10</option><option value="100">100 — низкий</option></select></label><label class="toggle-row standalone"><span><b>Использовать сопоставление</b><small>Отключённая роль не назначается как основная.</small></span><input id="roleEnabled" type="checkbox" checked><i></i></label><button class="button primary full" type="submit">Сохранить сопоставление <span>＋</span></button></form></article>
+            <article class="panel role-list-panel"><div class="panel-heading"><div><span class="eyebrow">DISCORD ROLES</span><h3>Роли в базе</h3><p>Существующие сопоставления сохраняются при открытии страницы.</p></div><span class="count-pill" id="roleCount">0</span></div><div id="rolesList" class="roles-list"><div class="list-empty">Загружаем роли…</div></div></article></div>
+        </section>
+
+        <section class="view" id="view-database">
+          <div class="integration-hero database-hero"><div class="integration-logo">▤</div><div class="integration-copy"><span class="eyebrow">DATABASE CONNECTION</span><h2>Supabase</h2><p>Основной источник участников, отношений, общей раскладки и настроек сайта.</p></div><span class="integration-state" id="dbStateBadge">Проверка…</span></div>
+          <div class="section-grid"><article class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">CONNECTION STATUS</span><h3>Состояние базы</h3><p>Сайт проверяет Supabase напрямую с publishable key и применением RLS.</p></div></div><div class="connection-list" id="dbConnectionList"><div class="connection-row"><span class="connection-indicator pending"></span><div><b>Supabase API</b><small>Проверка…</small></div><span>—</span></div></div><button class="button secondary full" id="testDbButton" type="button">Проверить Supabase</button><div class="info-callout"><span>i</span><p>URL и публичный publishable key находятся в `config.js`. Секретный ключ используется только отдельным Discord-ботом; безопасность браузерного доступа обеспечивает RLS.</p></div></article>
+          <article class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">SCHEMA</span><h3>Структура данных</h3><p>Таблицы, которые использует приложение.</p></div></div><div class="schema-list"><div><span class="schema-icon">♙</span><span><b>family_members</b><small>Профили, роли, аватары и активность</small></span><span class="schema-pill">ROSTER</span></div><div><span class="schema-icon">⌘</span><span><b>family_relations</b><small>Типизированные связи с направлением</small></span><span class="schema-pill">RELATIONS</span></div><div><span class="schema-icon">▦</span><span><b>board_layout</b><small>Общие координаты карточек</small></span><span class="schema-pill">LAYOUT</span></div><div><span class="schema-icon">⚙</span><span><b>board_settings</b><small>Настройки оформления сайта</small></span><span class="schema-pill">SETTINGS</span></div><div><span class="schema-icon">☷</span><span><b>role_mapping</b><small>Сопоставление Discord-ролей</small></span><span class="schema-pill">DISCORD</span></div></div><div class="warning-callout"><span>!</span><p>Перед публикацией проверьте и примените `sql/001_github_static_site_security.sql` после резервной копии БД. Скрипт не удаляет профили, но меняет права доступа.</p></div></article></div>
+        </section>
+
+        <section class="view" id="view-backup">
+          <div class="section-grid backup-grid"><article class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">EXPORT</span><h3>Создать резервную копию</h3><p>Экспорт параметров сайта, раскладки и данных, которые доступны панели через RLS.</p></div><span class="backup-icon">↧</span></div><ul class="backup-contents"><li>Настройки оформления сайта</li><li>Общее расположение карточек</li><li>Активные публичные профили (без Discord ID)</li><li>Типизированные семейные связи</li><li>Сопоставления Discord-ролей</li></ul><button class="button primary full" id="exportBackupButton" type="button">Скачать резервную копию сайта</button><div class="warning-callout"><span>!</span><p>Файл содержит публичные профили, настройки, связи и ID сопоставленных Discord-ролей. Храните его отдельно от публичного сайта.</p></div></article>
+          <article class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">RESTORE</span><h3>Восстановить настройки</h3><p>Можно загрузить экспорт Arch Family v2 и восстановить настройки.</p></div><span class="restore-icon">↥</span></div><label class="drop-zone" for="restoreFile"><span>↥</span><b>Выберите JSON-файл</b><small>arch-family-backup-v2 · только настройки и раскладка</small><input type="file" id="restoreFile" accept="application/json,.json"></label><p class="restore-filename" id="restoreFilename">Файл не выбран.</p><button class="button secondary full" id="restoreBackupButton" type="button" disabled>Восстановить настройки и раскладку</button><div class="info-callout"><span>i</span><p>Восстанавливаются оформление и координаты. Состав участников, связи и роли не заменяются автоматически — это предотвращает случайную перезапись актуальных данных Discord.</p></div></article></div>
+        </section>
+
+        <section class="view" id="view-security">
+          <div class="security-banner"><span class="security-shield">♢</span><div><span class="eyebrow">SECURITY OVERVIEW</span><h2>Безопасность и доступ</h2><p>Секреты бота не попадают в сайт. Панель защищена Supabase Auth, app_metadata.role = admin и RLS.</p></div></div>
+          <div class="section-grid"><article class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">ACCESS CONTROL</span><h3>Проверки безопасности</h3><p>Статус в текущей конфигурации приложения.</p></div></div><div class="security-checks" id="securityChecks"><div class="security-check"><span class="security-check-icon">…</span><div><b>Секреты отделены от клиентской части</b><small>Проверяем конфигурацию</small></div></div></div></article>
+          <article class="panel form-panel"><div class="panel-heading"><div><span class="eyebrow">IMPORTANT</span><h3>Перед публикацией</h3></div></div><div class="security-tips"><div><span>01</span><p><b>Смените пароль администратора</b><br>Используйте отдельную учётную запись Supabase Auth с надёжным паролем и app_metadata.role = admin.</p></div><div><span>02</span><p><b>Не выкладывайте `.env`</b><br>Файл `.env` относится только к Discord-боту и не должен попадать в Git. В нём хранятся токен бота и серверный Supabase key.</p></div><div><span>03</span><p><b>Включите TLS</b><br>Включите GitHub Pages HTTPS. Хостинг бота отдельно должен хранить секреты в переменных окружения.</p></div><div><span>04</span><p><b>Проверяйте Supabase RLS</b><br>Используйте SQL-файл `sql/002_verify_security.sql` после миграции.</p></div></div></article></div>
+        </section>
+
+        <footer class="admin-footer"><span>Arch Family Admin v2</span><span>Настройки хранятся в Supabase · Секреты бота остаются вне сайта</span></footer>
+      </main>
+    </div>
+  </div>
+  <div class="toast" id="adminToast" role="status" aria-live="polite"></div>
+  <dialog class="confirm-dialog" id="confirmDialog"><form method="dialog"><h3 id="confirmTitle">Подтвердите действие</h3><p id="confirmText"></p><div class="dialog-actions"><button class="button secondary" value="cancel">Отмена</button><button class="button primary" id="confirmOk" value="confirm">Продолжить</button></div></form></dialog>
+</body>
+</html>
